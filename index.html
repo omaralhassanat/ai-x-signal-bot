@@ -1,1 +1,689 @@
-404: Not Found
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI X Signal Bot</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #1e1e1e;
+            padding: 20px 0;
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #333;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .sidebar-menu li {
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-menu li:hover, .sidebar-menu li.active {
+            background-color: #2c2c2c;
+        }
+        .sidebar-menu li i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #4a8cff;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #e0e0e0;
+        }
+        select.form-control {
+            height: 40px;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #4a8cff;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #ff4a4a;
+            color: white;
+        }
+        .coin-list {
+            list-style: none;
+            padding: 0;
+        }
+        .coin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+        .coin-item:last-child {
+            border-bottom: none;
+        }
+        .slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider-toggle {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider-toggle:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider-toggle {
+            background-color: #4a8cff;
+        }
+        input:checked + .slider-toggle:before {
+            transform: translateX(26px);
+        }
+        #coinSearch {
+            margin-bottom: 15px;
+            width: 100%;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #e0e0e0;
+        }
+        .hidden {
+            display: none;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .dashboard-card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .dashboard-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .dashboard-card-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .sentiment-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .sentiment-bullish {
+            background-color: #4caf50;
+            color: white;
+        }
+        .sentiment-bearish {
+            background-color: #f44336;
+            color: white;
+        }
+        .sentiment-neutral {
+            background-color: #9e9e9e;
+            color: white;
+        }
+        .dashboard-card-content {
+            margin-bottom: 15px;
+        }
+        .dashboard-card-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #9e9e9e;
+        }
+        .analytics-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .analytics-card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+            height: 300px;
+        }
+        .api-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .api-connected {
+            background-color: #4caf50;
+            color: white;
+        }
+        .api-disconnected {
+            background-color: #f44336;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                padding: 10px 0;
+            }
+            .analytics-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">AI X Signal Bot</div>
+            <ul class="sidebar-menu">
+                <li onclick="showPage('dashboard')" id="menu-dashboard"><i>📊</i> Dashboard</li>
+                <li onclick="showPage('configuration')" id="menu-configuration" class="active"><i>⚙️</i> Configuration</li>
+                <li onclick="showPage('analytics')" id="menu-analytics"><i>📈</i> Analytics</li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <!-- Configuration Page -->
+            <div id="configuration-page">
+                <div class="header">
+                    <div class="page-title">Configuration</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">API Connection Status</div>
+                    <div>
+                        <div>CoinGecko API <span id="coingecko-status" class="api-status api-disconnected">Disconnected</span></div>
+                        <div>KuCoin API <span id="kucoin-status" class="api-status api-disconnected">Disconnected</span></div>
+                        <div>X (Twitter) API <span id="twitter-status" class="api-status api-disconnected">Disconnected</span></div>
+                        <div>Telegram API <span id="telegram-status" class="api-status api-disconnected">Disconnected</span></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Monitored Coins</div>
+                    <input type="text" id="coinSearch" placeholder="Search for coins...">
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <ul class="coin-list" id="availableCoins">
+                            <!-- Coins will be added here dynamically -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Alert Settings</div>
+                    <div class="form-group">
+                        <label>Alert Confidence Threshold: <span id="thresholdValue">70%</span></label>
+                        <input type="range" class="slider" id="confidenceThreshold" min="0" max="100" value="70">
+                        <p>Only receive alerts with confidence score above this threshold</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch">
+                            <input type="checkbox" id="telegramAlerts" checked>
+                            <span class="slider-toggle"></span>
+                        </label>
+                        <span style="margin-left: 10px;">Receive Telegram Alerts</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram Chat ID</label>
+                        <input type="text" class="form-control" id="telegramChatId" placeholder="Enter your Telegram Chat ID to receive alerts">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
+                </div>
+                <div class="card">
+                    <div class="card-title">API Connection Settings</div>
+                    <div class="form-group">
+                        <label>CoinGecko API Key</label>
+                        <input type="text" class="form-control" id="coingeckoApiKey">
+                    </div>
+                    <div class="form-group">
+                        <label>KuCoin API Key</label>
+                        <input type="text" class="form-control" id="kucoinApiKey">
+                    </div>
+                    <div class="form-group">
+                        <label>KuCoin API Secret</label>
+                        <input type="password" class="form-control" id="kucoinApiSecret">
+                    </div>
+                    <div class="form-group">
+                        <label>KuCoin API Passphrase</label>
+                        <input type="password" class="form-control" id="kucoinApiPassphrase">
+                    </div>
+                    <div class="form-group">
+                        <label>X (Twitter) Bearer Token</label>
+                        <input type="text" class="form-control" id="twitterBearerToken">
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram Bot Token</label>
+                        <input type="text" class="form-control" id="telegramBotToken">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveApiSettings()">CONNECT APIS</button>
+                </div>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="hidden">
+                <div class="header">
+                    <div class="page-title">Dashboard</div>
+                </div>
+                <div class="dashboard-grid" id="dashboardGrid">
+                    <!-- Dashboard cards will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analytics-page" class="hidden">
+                <div class="header">
+                    <div class="page-title">Analytics</div>
+                </div>
+                <div class="analytics-container">
+                    <div class="analytics-card">
+                        <div class="card-title">Sentiment Distribution</div>
+                        <div style="height: 250px; display: flex; justify-content: center; align-items: center;">
+                            <div style="text-align: center;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background-color: #4caf50; margin-right: 5px;"></div> Bullish: 45%<br>
+                                <div style="display: inline-block; width: 20px; height: 20px; background-color: #f44336; margin-right: 5px;"></div> Bearish: 30%<br>
+                                <div style="display: inline-block; width: 20px; height: 20px; background-color: #9e9e9e; margin-right: 5px;"></div> Neutral: 25%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="card-title">Alert History</div>
+                        <div style="height: 250px; display: flex; justify-content: center; align-items: center; color: #9e9e9e;">
+                            No alerts generated yet
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="card-title">Top Coins by Sentiment</div>
+                        <div style="height: 250px; display: flex; justify-content: center; align-items: center; color: #9e9e9e;">
+                            No data available yet
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="card-title">Buy Pressure Trends</div>
+                        <div style="height: 250px; display: flex; justify-content: center; align-items: center; color: #9e9e9e;">
+                            No data available yet
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // List of KuCoin coins (over 200 coins)
+        const kucoinCoins = [
+            { symbol: 'BTC', name: 'Bitcoin', selected: true },
+            { symbol: 'ETH', name: 'Ethereum', selected: true },
+            { symbol: 'SOL', name: 'Solana', selected: true },
+            { symbol: 'ADA', name: 'Cardano', selected: true },
+            { symbol: 'DOT', name: 'Polkadot', selected: false },
+            { symbol: 'LINK', name: 'Chainlink', selected: false },
+            { symbol: 'XRP', name: 'Ripple', selected: false },
+            { symbol: 'DOGE', name: 'Dogecoin', selected: false },
+            { symbol: 'AVAX', name: 'Avalanche', selected: false },
+            { symbol: 'MATIC', name: 'Polygon', selected: false },
+            { symbol: 'UNI', name: 'Uniswap', selected: false },
+            { symbol: 'AAVE', name: 'Aave', selected: false },
+            { symbol: 'ATOM', name: 'Cosmos', selected: false },
+            { symbol: 'LTC', name: 'Litecoin', selected: false },
+            { symbol: 'BCH', name: 'Bitcoin Cash', selected: false },
+            { symbol: 'XLM', name: 'Stellar', selected: false },
+            { symbol: 'EOS', name: 'EOS', selected: false },
+            { symbol: 'TRX', name: 'TRON', selected: false },
+            { symbol: 'XTZ', name: 'Tezos', selected: false },
+            { symbol: 'ALGO', name: 'Algorand', selected: false },
+            { symbol: 'NEO', name: 'NEO', selected: false },
+            { symbol: 'KCS', name: 'KuCoin Token', selected: false },
+            { symbol: 'VET', name: 'VeChain', selected: false },
+            { symbol: 'FIL', name: 'Filecoin', selected: false },
+            { symbol: 'THETA', name: 'Theta Network', selected: false },
+            { symbol: 'XMR', name: 'Monero', selected: false },
+            { symbol: 'CAKE', name: 'PancakeSwap', selected: false },
+            { symbol: 'COMP', name: 'Compound', selected: false },
+            { symbol: 'GRT', name: 'The Graph', selected: false },
+            { symbol: 'MKR', name: 'Maker', selected: false }
+        ];
+
+        // Generate 200 more random coins
+        for (let i = 1; i <= 200; i++) {
+            kucoinCoins.push({
+                symbol: `COIN${i}`,
+                name: `KuCoin Coin ${i}`,
+                selected: false
+            });
+        }
+
+        // Sample dashboard data
+        const dashboardData = [
+            {
+                coin: 'Bitcoin (BTC)',
+                sentiment: 'bullish',
+                confidence: 0.85,
+                post: 'Excited to announce our new partnership with a major payment processor! #Bitcoin #Adoption',
+                timestamp: '2 hours ago',
+                buyPressure: 0.78,
+                isTruePump: true,
+                tweetUrl: 'https://twitter.com/bitcoin/status/1234567890'
+            },
+            {
+                coin: 'Ethereum (ETH) ',
+                sentiment: 'bullish',
+                confidence: 0.72,
+                post: 'ETH 2.0 development is progressing faster than expected. Great news for scalability!',
+                timestamp: '4 hours ago',
+                buyPressure: 0.65,
+                isTruePump: false,
+                tweetUrl: 'https://twitter.com/ethereum/status/1234567891'
+            },
+            {
+                coin: 'Solana (SOL) ',
+                sentiment: 'neutral',
+                confidence: 0.55,
+                post: 'Working on some exciting updates to our network infrastructure. Stay tuned for more details.',
+                timestamp: '1 day ago',
+                buyPressure: 0.48,
+                isTruePump: false,
+                tweetUrl: 'https://twitter.com/solana/status/1234567892'
+            },
+            {
+                coin: 'Cardano (ADA) ',
+                sentiment: 'bearish',
+                confidence: 0.68,
+                post: 'We need to address some technical challenges before proceeding with the next upgrade.',
+                timestamp: '3 hours ago',
+                buyPressure: 0.32,
+                isTruePump: false,
+                tweetUrl: 'https://twitter.com/cardano/status/1234567893'
+            }
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function()  {
+            // Populate available coins
+            populateAvailableCoins();
+            
+            // Set up coin search functionality
+            document.getElementById('coinSearch').addEventListener('input', filterCoins);
+            
+            // Set up confidence threshold slider
+            document.getElementById('confidenceThreshold').addEventListener('input', updateThresholdValue);
+            
+            // Populate dashboard
+            populateDashboard();
+
+            // Load saved API keys if any
+            loadSavedApiKeys();
+        });
+
+        // Show selected page
+        function showPage(page) {
+            // Hide all pages
+            document.getElementById('dashboard-page').classList.add('hidden');
+            document.getElementById('configuration-page').classList.add('hidden');
+            document.getElementById('analytics-page').classList.add('hidden');
+            
+            // Remove active class from all menu items
+            document.getElementById('menu-dashboard').classList.remove('active');
+            document.getElementById('menu-configuration').classList.remove('active');
+            document.getElementById('menu-analytics').classList.remove('active');
+            
+            // Show selected page and mark menu item as active
+            document.getElementById(`${page}-page`).classList.remove('hidden');
+            document.getElementById(`menu-${page}`).classList.add('active');
+        }
+
+        // Populate available coins
+        function populateAvailableCoins() {
+            const coinsList = document.getElementById('availableCoins');
+            coinsList.innerHTML = '';
+            
+            kucoinCoins.forEach(coin => {
+                const li = document.createElement('li');
+                li.className = 'coin-item';
+                li.innerHTML = `
+                    <div>${coin.name} (${coin.symbol})</div>
+                    <label class="switch">
+                        <input type="checkbox" data-symbol="${coin.symbol}" ${coin.selected ? 'checked' : ''}>
+                        <span class="slider-toggle"></span>
+                    </label>
+                `;
+                coinsList.appendChild(li);
+            });
+        }
+
+        // Filter coins based on search
+        function filterCoins() {
+            const searchTerm = document.getElementById('coinSearch').value.toLowerCase();
+            const coinItems = document.querySelectorAll('.coin-item');
+            
+            coinItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Update threshold value display
+        function updateThresholdValue() {
+            const value = document.getElementById('confidenceThreshold').value;
+            document.getElementById('thresholdValue').textContent = value + '%';
+        }
+
+        // Populate dashboard with sample data
+        function populateDashboard() {
+            const dashboardGrid = document.getElementById('dashboardGrid');
+            dashboardGrid.innerHTML = '';
+            
+            dashboardData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'dashboard-card';
+                
+                const sentimentClass = 
+                    item.sentiment === 'bullish' ? 'sentiment-bullish' : 
+                    item.sentiment === 'bearish' ? 'sentiment-bearish' : 
+                    'sentiment-neutral';
+                
+                const pumpStatus = item.isTruePump ? 
+                    '<span style="color: #4caf50;">True Pump</span>' : 
+                    '<span style="color: #f44336;">Fake Pump</span>';
+                
+                card.innerHTML = `
+                    <div class="dashboard-card-header">
+                        <div class="dashboard-card-title">${item.coin}</div>
+                        <div class="sentiment-badge ${sentimentClass}">
+                            ${item.sentiment.toUpperCase()} (${Math.round(item.confidence * 100)}%)
+                        </div>
+                    </div>
+                    <div class="dashboard-card-content">
+                        "${item.post}"
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <a href="${item.tweetUrl}" target="_blank" style="color: #4a8cff; text-decoration: none;">View Original Tweet</a>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        Buy Pressure: ${Math.round(item.buyPressure * 100)}% - ${pumpStatus}
+                    </div>
+                    <div class="dashboard-card-footer">
+                        <div>${item.timestamp}</div>
+                    </div>
+                `;
+                
+                dashboardGrid.appendChild(card);
+            });
+        }
+
+        // Save API settings
+        function saveApiSettings() {
+            const coingeckoApiKey = document.getElementById('coingeckoApiKey').value;
+            const kucoinApiKey = document.getElementById('kucoinApiKey').value;
+            const kucoinApiSecret = document.getElementById('kucoinApiSecret').value;
+            const kucoinApiPassphrase = document.getElementById('kucoinApiPassphrase').value;
+            const twitterBearerToken = document.getElementById('twitterBearerToken').value;
+            const telegramBotToken = document.getElementById('telegramBotToken').value;
+            
+            // Save to localStorage
+            localStorage.setItem('coingeckoApiKey', coingeckoApiKey);
+            localStorage.setItem('kucoinApiKey', kucoinApiKey);
+            localStorage.setItem('kucoinApiSecret', kucoinApiSecret);
+            localStorage.setItem('kucoinApiPassphrase', kucoinApiPassphrase);
+            localStorage.setItem('twitterBearerToken', twitterBearerToken);
+            localStorage.setItem('telegramBotToken', telegramBotToken);
+            
+            // Update connection status
+            updateConnectionStatus();
+            
+            alert('API settings saved successfully!');
+        }
+
+        // Save alert settings
+        function saveSettings() {
+            const threshold = document.getElementById('confidenceThreshold').value;
+            const telegramEnabled = document.getElementById('telegramAlerts').checked;
+            const telegramChatId = document.getElementById('telegramChatId').value;
+            
+            // Get selected coins
+            const selectedCoins = [];
+            document.querySelectorAll('#availableCoins input:checked').forEach(checkbox => {
+                selectedCoins.push(checkbox.dataset.symbol);
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('confidenceThreshold', threshold);
+            localStorage.setItem('telegramEnabled', telegramEnabled);
+            localStorage.setItem('telegramChatId', telegramChatId);
+            localStorage.setItem('selectedCoins', JSON.stringify(selectedCoins));
+            
+            alert('Settings saved successfully!');
+        }
+
+        // Load saved API keys
+        function loadSavedApiKeys() {
+            const coingeckoApiKey = localStorage.getItem('coingeckoApiKey') || '';
+            const kucoinApiKey = localStorage.getItem('kucoinApiKey') || '';
+            const kucoinApiSecret = localStorage.getItem('kucoinApiSecret') || '';
+            const kucoinApiPassphrase = localStorage.getItem('kucoinApiPassphrase') || '';
+            const twitterBearerToken = localStorage.getItem('twitterBearerToken') || '';
+            const telegramBotToken = localStorage.getItem('telegramBotToken') || '';
+            
+            document.getElementById('coingeckoApiKey').value = coingeckoApiKey;
+            document.getElementById('kucoinApiKey').value = kucoinApiKey;
+            document.getElementById('kucoinApiSecret').value = kucoinApiSecret;
+            document.getElementById('kucoinApiPassphrase').value = kucoinApiPassphrase;
+            document.getElementById('twitterBearerToken').value = twitterBearerToken;
+            document.getElementById('telegramBotToken').value = telegramBotToken;
+            
+            // Update connection status
+            updateConnectionStatus();
+        }
+
+        // Update API connection status
+        function updateConnectionStatus() {
+            const coingeckoApiKey = localStorage.getItem('coingeckoApiKey') || '';
+            const kucoinApiKey = localStorage.getItem('kucoinApiKey') || '';
+            const twitterBearerToken = localStorage.getItem('twitterBearerToken') || '';
+            const telegramBotToken = localStorage.getItem('telegramBotToken') || '';
+            
+            document.getElementById('coingecko-status').className = coingeckoApiKey ? 'api-status api-connected' : 'api-status api-disconnected';
+            document.getElementById('coingecko-status').textContent = coingeckoApiKey ? 'Connected' : 'Disconnected';
+            
+            document.getElementById('kucoin-status').className = kucoinApiKey ? 'api-status api-connected' : 'api-status api-disconnected';
+            document.getElementById('kucoin-status').textContent = kucoinApiKey ? 'Connected' : 'Disconnected';
+            
+            document.getElementById('twitter-status').className = twitterBearerToken ? 'api-status api-connected' : 'api-status api-disconnected';
+            document.getElementById('twitter-status').textContent = twitterBearerToken ? 'Connected' : 'Disconnected';
+            
+            document.getElementById('telegram-status').className = telegramBotToken ? 'api-status api-connected' : 'api-status api-disconnected';
+            document.getElementById('telegram-status').textContent = telegramBotToken ? 'Connected' : 'Disconnected';
+        }
+    </script>
+</body>
+</html>
